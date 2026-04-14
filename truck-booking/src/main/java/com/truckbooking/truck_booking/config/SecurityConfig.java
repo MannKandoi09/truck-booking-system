@@ -26,12 +26,20 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        // ✅ Only register & login open
+                        // Public APIs
                         .requestMatchers("/api/users/register", "/api/users/login").permitAll()
-                        // 🔐 बाकी sab secure
+
+                        // USER only
+                        .requestMatchers("/api/bookings/**").hasRole("USER")
+
+                        // ADMIN only
+                        .requestMatchers("/api/trucks/**").hasRole("ADMIN")
+                        .requestMatchers("/api/drivers/**").hasRole("ADMIN")
+                        .requestMatchers("/api/assignments/**").hasRole("ADMIN")
+
+                        // बाकी सब authenticated
                         .anyRequest().authenticated()
                 )
-                // 🔥 JWT Filter add
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

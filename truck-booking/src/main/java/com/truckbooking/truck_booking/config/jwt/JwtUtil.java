@@ -11,15 +11,15 @@ import java.util.Date;
 public class JwtUtil {
 
     private final String SECRET_KEY = "mysecretkeymysecretkeymysecretkey12345";
-
     private final Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
 
-    // 🔥 Generate Token
-    public String generateToken(String email) {
+    // 🔥 Generate Token with ROLE
+    public String generateToken(String email, String role) {
         return Jwts.builder()
                 .setSubject(email)
+                .claim("role", role) // ✅ role added
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1 hour
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -27,6 +27,11 @@ public class JwtUtil {
     // 🔍 Extract Email
     public String extractEmail(String token) {
         return getClaims(token).getSubject();
+    }
+
+    // 🔥 Extract Role
+    public String extractRole(String token) {
+        return getClaims(token).get("role", String.class);
     }
 
     // ✅ Validate Token
@@ -39,7 +44,6 @@ public class JwtUtil {
         }
     }
 
-    // 🔐 Get Claims
     private Claims getClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(key)

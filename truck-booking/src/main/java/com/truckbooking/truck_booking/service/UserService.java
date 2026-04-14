@@ -21,13 +21,14 @@ public class UserService {
     @Autowired
     private JwtUtil jwtUtil;
 
-    // 🔐 REGISTER
     public String registerUser(UserDTO userDTO) {
 
         User user = new User();
         user.setName(userDTO.getName());
         user.setEmail(userDTO.getEmail());
         user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+
+        // 👉 default USER role
         user.setRole(User.Role.USER);
 
         userRepository.save(user);
@@ -35,7 +36,6 @@ public class UserService {
         return "User Registered Successfully";
     }
 
-    // 🔥 LOGIN → TOKEN RETURN
     public String loginUser(LoginDTO loginDTO) {
 
         User user = userRepository.findByEmail(loginDTO.getEmail())
@@ -45,7 +45,7 @@ public class UserService {
             throw new RuntimeException("Invalid password");
         }
 
-        // 🔐 Generate JWT Token
-        return jwtUtil.generateToken(user.getEmail());
+        // 🔥 Token with role
+        return jwtUtil.generateToken(user.getEmail(), user.getRole().name());
     }
 }
