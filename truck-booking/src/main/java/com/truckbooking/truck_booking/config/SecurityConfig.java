@@ -26,18 +26,17 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        // Public APIs
+                        // ✅ Public APIs
                         .requestMatchers("/api/users/register", "/api/users/login").permitAll()
 
-                        // USER only
-                        .requestMatchers("/api/bookings/**").hasRole("USER")
+                        // 🔥 TEMP: open booking API
+                        .requestMatchers("/api/bookings/**").permitAll()
 
-                        // ADMIN only
-                        .requestMatchers("/api/trucks/**").hasRole("ADMIN")
-                        .requestMatchers("/api/drivers/**").hasRole("ADMIN")
-                        .requestMatchers("/api/assignments/**").hasRole("ADMIN")
+                        // 🔥 TEMP: open all admin APIs
+                        .requestMatchers("/api/trucks/**").permitAll()
+                        .requestMatchers("/api/drivers/**").permitAll()
+                        .requestMatchers("/api/assignments/**").permitAll()
 
-                        // बाकी सब authenticated
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

@@ -29,7 +29,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
         String path = request.getRequestURI();
 
-        // skip login/register
+        // ✅ Skip login/register
         if (path.contains("/api/users/login") || path.contains("/api/users/register")) {
             filterChain.doFilter(request, response);
             return;
@@ -37,22 +37,22 @@ public class JwtFilter extends OncePerRequestFilter {
 
         String authHeader = request.getHeader("Authorization");
 
+        // 🔥 CHANGE: block nahi karenge
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            filterChain.doFilter(request, response); // 👈 allow request
             return;
         }
 
         String token = authHeader.substring(7);
 
         if (!jwtUtil.validateToken(token)) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            filterChain.doFilter(request, response); // 👈 allow
             return;
         }
 
         String email = jwtUtil.extractEmail(token);
         String role = jwtUtil.extractRole(token);
 
-        // 🔥 ROLE SET HERE
         UsernamePasswordAuthenticationToken authentication =
                 new UsernamePasswordAuthenticationToken(
                         email,

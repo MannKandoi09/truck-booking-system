@@ -9,10 +9,17 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/trucks")
+@CrossOrigin(origins = "*")
 public class TruckController {
 
     @Autowired
     private TruckService truckService;
+
+    @DeleteMapping("/{id}")
+    public String deleteTruck(@PathVariable Long id) {
+        truckService.deleteTruck(id);
+        return "Truck Deleted";
+    }
 
     // ➕ Add Truck
     @PostMapping

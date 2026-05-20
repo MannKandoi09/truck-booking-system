@@ -13,6 +13,10 @@ public class TruckService {
     @Autowired
     private TruckRepository truckRepository;
 
+    public void deleteTruck(Long id) {
+        truckRepository.deleteById(id);
+    }
+
     // ➕ Add Truck
     public Truck addTruck(Truck truck) {
         return truckRepository.save(truck);

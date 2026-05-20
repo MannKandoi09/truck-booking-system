@@ -5,23 +5,25 @@ import com.truckbooking.truck_booking.service.BookingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/bookings")
+@CrossOrigin(origins = "*")
 public class BookingController {
 
     @Autowired
     private BookingService bookingService;
 
-    // ➕ Create Booking
+    // 🔥 Create Booking (TEMP FIX - no principal)
     @PostMapping
-    public Booking createBooking(@RequestBody Booking booking, Principal principal) {
-        return bookingService.createBooking(booking, principal.getName());
+    public Booking createBooking(@RequestBody Booking booking) {
+
+        // 🔥 Hardcoded email (for now)
+        return bookingService.createBooking(booking, "jetha@gmail.com");
     }
 
-    // 📄 Get All Bookings
+    // Get all bookings
     @GetMapping
     public List<Booking> getAllBookings() {
         return bookingService.getAllBookings();
